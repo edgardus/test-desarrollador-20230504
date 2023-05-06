@@ -1,5 +1,6 @@
 package cl.prueba.usuarios.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,9 +23,11 @@ import javax.persistence.ManyToOne;
 public class Phone implements Comparable<Phone> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
     @ManyToOne
     @JoinColumn(nullable = false)
+    @JsonIgnore
     private ApplicationUser applicationUser;
     @JsonProperty
     private String number;
