@@ -82,7 +82,7 @@ public class UsuarioService {
      * Metodo encargado de generar la salida de una operacion exitosa
      *
      * @param applicationUser {@link ApplicationUser}
-     * @param responseHashMap
+     * @param responseHashMap {@link Map} &lt; {@link String}, {@link String} &gt;
      * @return {@link Map} &lt; {@link String}, {@link String} &gt;
      */
     private Map<String, String> creaMapRespuesta(ApplicationUser applicationUser, Map<String, String> responseHashMap) {
@@ -125,15 +125,23 @@ public class UsuarioService {
         }
         responseHashMap = validaCreacionUsuario(applicationUser, responseHashMap);
         if (responseHashMap.containsKey("id")) {
-            if (Long.getLong(responseHashMap.get("id")).equals(id)) {
-                responseHashMap.clear();
+            try {
+                if (Long.parseLong(responseHashMap.get("id"))==id) {
+                    responseHashMap.clear();
+                }
+            } catch (NumberFormatException e) {
+                log.error("Problemas con la conversion");
             }
         }
         if (responseHashMap.isEmpty()) {
-            applicationUser.setId(id);
-            applicationUser.setModificationDate(LocalDateTime.now());
-            ApplicationUser a = applicationUserRepository.save(applicationUser);
-            responseHashMap = creaMapRespuesta(a, responseHashMap);
+            try {
+                applicationUser.setId(id);
+                applicationUser.setModificationDate(LocalDateTime.now());
+                ApplicationUser a = applicationUserRepository.save(applicationUser);
+                responseHashMap = creaMapRespuesta(a, responseHashMap);
+            } catch (Exception e) {
+                responseHashMap.put(UsuariosConstants.MESSAGE,e.getMessage());
+            }
         }
         return respuesta;
     }
@@ -145,6 +153,7 @@ public class UsuarioService {
      * @return true valido boolean
      */
     private boolean validatePassword(ApplicationUser applicationUser) {
+        log.debug("validacion Password");
         return applicationUser.getEmail() != null &&
                 !applicationUser.getPassword().isBlank() &&
                 !applicationUser.getPassword().matches(UsuariosConstants.INVALID_PASSWORD);
@@ -159,6 +168,7 @@ public class UsuarioService {
      */
     private Map<String, String> validaCreacionUsuario(ApplicationUser applicationUser, Map<String, String> responseHashMap) {
         if (!validatePassword(applicationUser)) {
+            log.debug("password no valido");
             responseHashMap.put(UsuariosConstants.MESSAGE, UsuariosConstants.INVALID_PASSWORD_MESSAGE);
         } else {
             Optional<ApplicationUser> byEmail = applicationUserRepository.findByEmail(applicationUser.getEmail());
