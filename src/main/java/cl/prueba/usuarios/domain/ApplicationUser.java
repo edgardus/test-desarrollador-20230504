@@ -1,13 +1,17 @@
 package cl.prueba.usuarios.domain;
 
-import cl.prueba.usuarios.constants.ExpresionesPermitidas;
+import cl.prueba.usuarios.constants.UsuariosConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -24,7 +28,7 @@ public class ApplicationUser implements Comparable<ApplicationUser> {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     private Long id;
-    @Pattern(regexp =  ExpresionesPermitidas.EMAIL, message ="Email no válido")
+    @Pattern(regexp =  UsuariosConstants.EMAIL, message ="Email no válido")
     private String email;
     private String password;
     @JsonIgnore

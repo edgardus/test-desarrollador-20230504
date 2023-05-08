@@ -34,7 +34,6 @@ public class Phone implements Comparable<Phone> {
 
     @Override
     public int compareTo(Phone o) {
-
         return this.applicationUser.compareTo(o.applicationUser) * this.number.compareTo(o.number);
     }
 }
